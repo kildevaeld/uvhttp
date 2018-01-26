@@ -1,0 +1,6 @@
+[submodule "vendor/libuv"]
+	path = vendor/libuv
+	url = git@github.com:libuv/libuv.git
+[submodule "vendor/http-parser"]
+	path = vendor/http-parser
+	url = git@github.com:nodejs/http-parser.git
