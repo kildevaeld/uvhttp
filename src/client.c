@@ -1,3 +1,4 @@
+#include "client_p.h"
 #include "debug.h"
 #include "parser.h"
 #include <http_parser.h>
@@ -5,7 +6,7 @@
 #include <uv.h>
 #include <uvhttp/client.h>
 
-static http_parser_settings parser_settings = {
+/*static http_parser_settings parser_settings = {
     .on_message_begin = on_message_begin,
     .on_url = on_url,
     .on_header_field = on_header_field,
@@ -19,13 +20,13 @@ static http_parser_settings parser_settings = {
 #define UVERR(r, msg)                                                          \
   fprintf(stderr, "%s: [%s(%d): %s]\n", msg, uv_err_name((r)), r,              \
           uv_strerror((r)));
-
+*/
 static void alloc_cb(uv_handle_t *handle, size_t size, uv_buf_t *buf) {
   buf->base = malloc(size);
   buf->len = size;
 }
 
-static void on_resolved(uv_getaddrinfo_t *resolver, int status,
+/*static void on_resolved(uv_getaddrinfo_t *resolver, int status,
                         struct addrinfo *res);
 
 static void on_connect(uv_connect_t *connect, int status);
@@ -41,7 +42,7 @@ static int maybe_write_headers(http_client_t *client);
 static void on_write_end(uv_write_t *req, int status);
 
 static int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
-                                     http_request_t *req, uv_write_cb cb);
+                                     http_request_t *req, uv_write_cb cb);*/
 
 http_client_t *uv_http_create(uv_loop_t *loop, http_request_t *req) {
   http_client_t *client = malloc(sizeof(http_client_t));
@@ -63,6 +64,12 @@ void uv_http_free(http_client_t *client) {
 
   free(client);
 }
+
+void uv_http_set_data(http_client_t *client, void *data) {
+  client->data = data;
+}
+
+void *uv_http_get_data(http_client_t *client) { return client->data; }
 
 int uv_http_request(http_client_t *client, http_request_callbacks *callbacks) {
   // TODO: Handle IP6
@@ -161,7 +168,7 @@ int uv_http_request_end(http_client_t *client) {
 }
 
 // PRIVATES
-
+/*
 static inline bool is_ip(const char *ipAddress) {
   struct sockaddr_in sa;
   int result = inet_pton(AF_INET, ipAddress, &(sa.sin_addr));
@@ -360,9 +367,9 @@ static int write_request(http_request_t *req, char *buf) {
   i += 2;
 
   return i;
-}
+}*/
 
-static int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
+/*static int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
                                      http_request_t *req, uv_write_cb cb) {
   const char *path = req->path;
   if (!path)
@@ -373,4 +380,4 @@ static int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
   buf.base = message;
 
   return uv_write(write, stream, &buf, 1, on_write_end);
-}
+}*/

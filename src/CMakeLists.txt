@@ -4,6 +4,7 @@ set(SOURCES
     header.c
     request.c
     parser.c
+    client_p.c
 )
 
 add_library(uvhttp ${SOURCES})

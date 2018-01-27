@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "client_p.h"
 #include "debug.h"
 #include <stdlib.h>
 #include <string.h>
@@ -70,11 +71,16 @@ int on_headers_complete(http_parser *parser) {
 
   return 0;
 }
-int on_message_complete(http_parser *parser) {
-  http_client_t *client = (http_client_t *)parser->data;
+
+static void on_close(uv_handle_t *h) {
+   http_client_t *client = (http_client_t *)h;
   if (client->callbacks->on_finished)
     client->callbacks->on_finished(client);
-  // uv_close((uv_handle_t *)&client->handle, NULL);
+}
+
+int on_message_complete(http_parser *parser) {
+  http_client_t *client = (http_client_t *)parser->data;
+  uv_close((uv_handle_t *)client, on_close);
 
   return 0;
 }

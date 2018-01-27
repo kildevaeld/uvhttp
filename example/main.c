@@ -13,7 +13,7 @@ static bool on_headers(http_client_t *client, int status,
 static bool on_data(http_client_t *client, const char *data, size_t size) {
   printf("data %lu \n", size);
 
-  FILE *file = client->data;
+  FILE *file = uv_http_get_data(client);
 
   size_t out = fwrite(data, sizeof(char), size, file);
 
@@ -25,7 +25,6 @@ static bool on_data(http_client_t *client, const char *data, size_t size) {
 }
 
 static void on_connect(http_client_t *client, int status) {
-  printf("connect\n");
   uv_buf_t buf;
   buf.base = "Hello, World";
   buf.len = strlen(buf.base);
@@ -59,7 +58,7 @@ int main() {
   uv_http_request_init(&req, HTTP_GET, "http://localhost:3000");
   http_client_t *client = uv_http_create(loop, &req);
 
-  client->data = f;
+  uv_http_set_data(client, f);
 
   uv_http_request(client, &cb);
 
