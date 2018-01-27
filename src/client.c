@@ -71,6 +71,10 @@ void uv_http_set_data(http_client_t *client, void *data) {
 
 void *uv_http_get_data(http_client_t *client) { return client->data; }
 
+http_request_t *uv_http_get_request(http_client_t *client) {
+  return client->req;
+}
+
 int uv_http_request(http_client_t *client, http_request_callbacks *callbacks) {
   // TODO: Handle IP6
   client->callbacks = callbacks;
@@ -134,8 +138,10 @@ int uv_http_request_write(http_client_t *client, uv_buf_t *buf,
     str[l - 2] = '\r';
     str[l - 1] = '\n';
     uv_buf_t buffer = uv_buf_init(str, l);
+    debug("write chunk");
     return uv_write(write, (uv_stream_t *)client, &buffer, 1, on_write_end);
   }
+  debug("write body");
   return uv_write(write, (uv_stream_t *)client, buf, 1, on_write_end);
 }
 
@@ -148,14 +154,14 @@ int uv_http_request_end(http_client_t *client) {
   if (m == HTTP_POST || m == HTTP_PUT) {
     uv_http_header_t *headers = client->req->headers;
     bool isc = is_chunked(headers);
-
+   
     if (isc) {
       uv_buf_t buf;
       buf.base = "0\r\n\r\n";
       buf.len = 5;
       uv_write_t *write = malloc(sizeof(uv_write_t));
       write->data = NULL;
-
+      debug("write trailing chunk\n");
       int rc = uv_write(write, (uv_stream_t *)client, &buf, 1, on_write_end);
       if (rc != 0) {
         free(write);
@@ -163,7 +169,7 @@ int uv_http_request_end(http_client_t *client) {
       }
     }
   }
-
+  debug("start reading");
   return uv_read_start((uv_stream_t *)client, alloc_cb, on_req_read);
 }
 

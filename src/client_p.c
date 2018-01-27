@@ -42,9 +42,9 @@ void on_write_end(uv_write_t *req, int status) {
     goto on_write_end_end;
   }
   if (req->data) {
-    // http_client_t *client = req->data;
-
-    // cb(req, status);
+     uv_write_cb cb = req->data;
+     cb(req, status);
+     return;
   }
 
 on_write_end_end:
@@ -61,6 +61,11 @@ int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
   buf.len = write_request(req, message);
   buf.base = message;
 
+  char m[buf.len+1];
+  memcpy(m, buf.base, buf.len);
+  m[buf.len] = '\0';
+  
+  write->data = cb;
   return uv_write(write, stream, &buf, 1, on_write_end);
 }
 
@@ -147,11 +152,11 @@ void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
   http_client_t *handle = (http_client_t *)tcp;
   http_request_t *req = handle->req;
   req->parser.data = handle;
-
+    
   if (nread == UV_EOF) {
     debug("reached EOF");
     http_parser_execute(&req->parser, &parser_settings, buf->base, 0);
-    uv_close((uv_handle_t *)&handle->handle, NULL);
+    //uv_close((uv_handle_t *)&handle->handle, NULL);
   } else if (nread > 0) {
 
     parsed =
