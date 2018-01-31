@@ -1,6 +1,10 @@
 #ifndef UVEXT_HEADER_H
 #define UVEXT_HEADER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define UV_HTTP_HEADER_MAX 500
 
 typedef struct uv_http_header_s {
@@ -34,5 +38,9 @@ void uv_http_header_free(uv_http_header_t *header);
  * Append a header to the header list */
 void uv_http_header_append(uv_http_header_t *head, uv_http_header_t *header);
 int uv_http_header_size(uv_http_header_t *head);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

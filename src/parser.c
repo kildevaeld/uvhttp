@@ -73,12 +73,13 @@ int on_headers_complete(http_parser *parser) {
 }
 
 static void on_close(uv_handle_t *h) {
-   http_client_t *client = (http_client_t *)h;
+  http_client_t *client = (http_client_t *)h;
   if (client->callbacks->on_finished)
     client->callbacks->on_finished(client);
 }
 
 int on_message_complete(http_parser *parser) {
+  debug("message complete");
   http_client_t *client = (http_client_t *)parser->data;
   uv_close((uv_handle_t *)client, on_close);
 
@@ -86,6 +87,7 @@ int on_message_complete(http_parser *parser) {
 }
 int on_body(http_parser *parser, const char *hdr, size_t length) {
   http_client_t *client = (http_client_t *)parser->data;
+  debug("read body %lu", length);
   if (client->callbacks->on_data)
     client->callbacks->on_data(client, hdr, length);
 
