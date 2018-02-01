@@ -4,6 +4,3 @@
 [submodule "vendor/http-parser"]
 	path = vendor/http-parser
 	url = git@github.com:nodejs/http-parser.git
-[submodule "vendor/evt-tls"]
-	path = vendor/evt-tls
-	url = git@github.com:deleisha/evt-tls.git
