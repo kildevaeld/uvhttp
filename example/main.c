@@ -24,6 +24,12 @@ static bool on_data(http_client_t *client, const char *data, size_t size) {
   return true;
 }
 
+static void on_error(http_client_t *client, const char *name,
+                     const char *desc) {
+  printf("error %s : %s\n", name, desc);
+  uv_http_free(client);
+}
+
 static void on_connect(http_client_t *client, int status) {
 
   uv_buf_t buf;
@@ -61,7 +67,8 @@ int main() {
   http_request_callbacks cb = {.on_connect = on_connect,
                                .on_headers = on_headers,
                                .on_finished = on_finished,
-                               .on_data = on_data};
+                               .on_data = on_data,
+                               .on_error = on_error};
 
   http_request_t req;
   uv_http_request_init(&req, HTTP_POST, "http://localhost:3000");

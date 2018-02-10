@@ -84,8 +84,14 @@ int maybe_write_headers(http_client_t *client) {
 }
 
 void on_resolved(uv_getaddrinfo_t *resolver, int status, struct addrinfo *res) {
+
+  http_client_t *client = resolver->data;
+
   if (status < 0) {
-    fprintf(stderr, "getaddrinfo callback error %s\n", uv_err_name(status));
+    if (client->callbacks->on_error)
+      client->callbacks->on_error(client, uv_err_name(status),
+                                  "getaddrinfo callback error");
+    // fprintf(stderr, "getaddrinfo callback error %s\n", uv_err_name(status));
     free(resolver);
     return;
   }
@@ -94,7 +100,6 @@ void on_resolved(uv_getaddrinfo_t *resolver, int status, struct addrinfo *res) {
 
   uv_connect_t *connect_req = malloc(sizeof(uv_connect_t));
 
-  http_client_t *client = resolver->data;
   connect_req->data = client->callbacks->on_connect;
 
   uv_tcp_init(resolver->loop, (uv_tcp_t *)&client->handle);
@@ -128,12 +133,16 @@ void on_resolved(uv_getaddrinfo_t *resolver, int status, struct addrinfo *res) {
 }
 
 void on_connect(uv_connect_t *connect, int status) {
+  http_client_t *client = (http_client_t *)connect->handle;
+
   if (status < 0) {
-    fprintf(stderr, "connect callback error %s\n", uv_err_name(status));
+    if (client->callbacks->on_error)
+      client->callbacks->on_error(client, uv_err_name(status),
+                                  "connect callback error");
+
     goto connect_end;
   }
 
-  http_client_t *client = (http_client_t *)connect->handle;
   debug("connected to %s:%i%s", client->req->host, client->req->port,
         client->req->path ? client->req->path : "/");
 
@@ -172,7 +181,11 @@ void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
       uv_close((uv_handle_t *)tcp, NULL);
     }
   } else {
-    UVERR((int)nread, "reading req req");
+    if (handle->callbacks->on_error) {
+      handle->callbacks->on_error(handle, uv_err_name(nread), "reading req");
+    }
+    // uv_close((uv_handle_t *)tcp, NULL);
+    // UVERR((int)nread, "reading req req");
   }
   if (buf->base)
     free(buf->base);
