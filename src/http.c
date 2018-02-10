@@ -1,48 +1,15 @@
-#include "client_p.h"
 #include "debug.h"
+#include "http_p.h"
 #include "parser.h"
 #include <http_parser.h>
 #include <stdlib.h>
 #include <uv.h>
-#include <uvhttp/client.h>
+#include <uvhttp/http.h>
 
-/*static http_parser_settings parser_settings = {
-    .on_message_begin = on_message_begin,
-    .on_url = on_url,
-    .on_header_field = on_header_field,
-    .on_header_value = on_header_value,
-    .on_headers_complete = on_headers_complete,
-    .on_message_complete = on_message_complete,
-    .on_body = on_body,
-    .on_chunk_header = on_chunk_header,
-    .on_chunk_complete = on_chunk_complete};
-
-#define UVERR(r, msg)                                                          \
-  fprintf(stderr, "%s: [%s(%d): %s]\n", msg, uv_err_name((r)), r,              \
-          uv_strerror((r)));
-*/
 static void alloc_cb(uv_handle_t *handle, size_t size, uv_buf_t *buf) {
   buf->base = malloc(size);
   buf->len = size;
 }
-
-/*static void on_resolved(uv_getaddrinfo_t *resolver, int status,
-                        struct addrinfo *res);
-
-static void on_connect(uv_connect_t *connect, int status);
-
-static void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf);
-
-static inline bool is_ip(const char *ipAddress);
-
-static inline bool is_chunked(uv_http_header_t *headers);
-
-static int maybe_write_headers(http_client_t *client);
-
-static void on_write_end(uv_write_t *req, int status);
-
-static int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
-                                     http_request_t *req, uv_write_cb cb);*/
 
 http_client_t *uv_http_create(uv_loop_t *loop, http_request_t *req) {
   http_client_t *client = malloc(sizeof(http_client_t));

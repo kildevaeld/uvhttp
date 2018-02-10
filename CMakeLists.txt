@@ -2,13 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(uvhttp)
 
-set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 option(UVHTTP_SYSTEM_UV "Use system libuv" on)
 option(UVHTTP_BUILD_TEST "Build tests" off)
 option(UVHTTP_BUILD_EXAMPLE "Build example" off)
 option(UVHTTP_BUILD_DEBUG "build with debugging ouput" off)
-
+option(UVHTTP_TLS "build https" off)
 
 ## Libuv
 if (NOT ${UVHTTP_SYSTEM_UV})
@@ -23,6 +22,10 @@ include_directories(include)
 
 ## HTTP_PARSER
 include(cmake/http-parser.cmake)
+
+if(UVHTTP_TLS)
+	add_subdirectory(vendor/evt-tls)
+endif(UVHTTP_TLS)
 
 add_subdirectory(src)
 

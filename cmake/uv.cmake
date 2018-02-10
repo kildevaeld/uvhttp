@@ -27,7 +27,7 @@ include(CheckTypeSize)
 
 cmake_minimum_required(VERSION 2.8.9)
 
-set(LIBUVDIR ${PROJECT_ROOT}/vendor/libuv)
+set(LIBUVDIR ${PROJECT_SOURCE_DIR}/vendor/libuv)
 
 include_directories(
   ${LIBUVDIR}/src
@@ -202,3 +202,5 @@ if(APPLE)
     ${APPLICATION_SERVICES_LIBRARY}
   )
 endif()
+
+#set(LIBUV_LIBRARIES )

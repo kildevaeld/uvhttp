@@ -1,8 +1,8 @@
-#include "client_p.h"
+#include "http_p.h"
 #include "debug.h"
 #include "parser.h"
 #include <stdlib.h>
-#include <uvhttp/client.h>
+#include <uvhttp/http.h>
 
 static http_parser_settings parser_settings = {
     .on_message_begin = on_message_begin,
@@ -42,9 +42,9 @@ void on_write_end(uv_write_t *req, int status) {
     goto on_write_end_end;
   }
   if (req->data) {
-     uv_write_cb cb = req->data;
-     cb(req, status);
-     return;
+    uv_write_cb cb = req->data;
+    cb(req, status);
+    return;
   }
 
 on_write_end_end:
@@ -57,14 +57,14 @@ int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
   if (!path)
     path = "/";
   char message[uv_http_header_size(req->headers) + strlen(path) + 20];
-  uv_buf_t buf; 
+  uv_buf_t buf;
   buf.len = write_request(req, message);
   buf.base = message;
 
-  char m[buf.len+1];
+  char m[buf.len + 1];
   memcpy(m, buf.base, buf.len);
   m[buf.len] = '\0';
-  
+
   write->data = cb;
   return uv_write(write, stream, &buf, 1, on_write_end);
 }
@@ -152,11 +152,11 @@ void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
   http_client_t *handle = (http_client_t *)tcp;
   http_request_t *req = handle->req;
   req->parser.data = handle;
-    
+
   if (nread == UV_EOF) {
     debug("reached EOF");
     http_parser_execute(&req->parser, &parser_settings, buf->base, 0);
-    //uv_close((uv_handle_t *)&handle->handle, NULL);
+    // uv_close((uv_handle_t *)&handle->handle, NULL);
   } else if (nread > 0) {
 
     parsed =
@@ -167,7 +167,7 @@ void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
       const char *err = http_errno_description(HTTP_PARSER_ERRNO(&req->parser));
 
       log_err("parsing http req  %s: %s", nam, err);
-      if (handle->callbacks->on_error) 
+      if (handle->callbacks->on_error)
         handle->callbacks->on_error(handle, nam, err);
       uv_close((uv_handle_t *)tcp, NULL);
     }

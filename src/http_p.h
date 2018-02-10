@@ -1,7 +1,7 @@
 #pragma once
 #include <uv.h>
-#include <uvhttp/callbacks.h>
 #include <uvhttp/request.h>
+#include <uvhttp/typedefs.h>
 
 struct http_client_t {
   uv_stream_t handle;

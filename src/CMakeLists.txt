@@ -1,16 +1,23 @@
 
 set(SOURCES
-    client.c
+    http.c
+    http_p.c
     header.c
     request.c
     parser.c
-    client_p.c
+    
 )
+
+if(UVHTTP_TLS)
+    set(SOURCES
+        ${SOURCES}
+    )
+endif(UVHTTP_TLS)
 
 add_library(uvhttp ${SOURCES})
 target_link_libraries(uvhttp uv http_parser)
 
-target_include_directories(uvhttp PUBLIC ${PROJECT_ROOT}/vendor/http-parser)
+target_include_directories(uvhttp PUBLIC ${PROJECT_SOURCE_DIR}/vendor/http-parser)
 
 if (NOT UVHTTP_BUILD_DEBUG)
     target_compile_definitions(uvhttp PUBLIC NDEBUG=1)

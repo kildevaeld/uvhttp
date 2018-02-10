@@ -1,12 +1,12 @@
 #pragma once
-#include "defs.h"
-#include <stdbool.h>
-#include <uv.h>
-#include <uvhttp/header.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdbool.h>
+#include <uv.h>
+#include <uvhttp/header.h>
+#include <uvhttp/typedefs.h>
 
 typedef struct http_request_t {
   UV_HTTP_REQUEST_DEF;

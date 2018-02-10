@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <uvhttp/client.h>
+#include <uvhttp/http.h>
 #include <uvhttp/request.h>
 
 static bool on_headers(http_client_t *client, int status,
@@ -25,7 +25,7 @@ static bool on_data(http_client_t *client, const char *data, size_t size) {
 }
 
 static void on_connect(http_client_t *client, int status) {
-  
+
   uv_buf_t buf;
   buf.base = "TestMig";
   buf.len = strlen(buf.base);
@@ -38,8 +38,8 @@ static void on_connect(http_client_t *client, int status) {
 
   int ret = uv_http_request_write(client, &buf, NULL);
   printf("write %i\n", ret);
-     ret = uv_http_request_end(client);
-   printf("end %i\n", ret);
+  ret = uv_http_request_end(client);
+  printf("end %i\n", ret);
 }
 
 static void on_finished(http_client_t *client) {
@@ -62,17 +62,16 @@ int main() {
                                .on_headers = on_headers,
                                .on_finished = on_finished,
                                .on_data = on_data};
-  
-  
+
   http_request_t req;
   uv_http_request_init(&req, HTTP_POST, "http://localhost:3000");
 
   req.headers = uv_http_header_new();
-   uv_http_header_set(req.headers, "Host", "localhost:3000");
-  //uv_http_header_set(req.headers, "transfer-encoding", "chunked");
+  uv_http_header_set(req.headers, "Host", "localhost:3000");
+  // uv_http_header_set(req.headers, "transfer-encoding", "chunked");
   uv_http_header_set(req.headers, "content-type", "text/plain");
   uv_http_header_set(req.headers, "connection", "close");
-  
+
   http_client_t *client = uv_http_create(loop, &req);
 
   uv_http_set_data(client, f);

@@ -1,5 +1,4 @@
-#ifndef UVEXT_HEADER_H
-#define UVEXT_HEADER_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +40,4 @@ int uv_http_header_size(uv_http_header_t *head);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

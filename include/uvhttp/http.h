@@ -1,12 +1,12 @@
 #pragma once
-#include <stdbool.h>
-#include <uv.h>
-#include <uvhttp/callbacks.h>
-#include <uvhttp/request.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdbool.h>
+#include <uv.h>
+#include <uvhttp/request.h>
+#include <uvhttp/typedefs.h>
 
 http_client_t *uv_http_create(uv_loop_t *loop, http_request_t *req);
 

@@ -1,9 +1,9 @@
 #include "parser.h"
-#include "client_p.h"
 #include "debug.h"
+#include "http_p.h"
 #include <stdlib.h>
 #include <string.h>
-#include <uvhttp/client.h>
+#include <uvhttp/http.h>
 
 char *strslice(const char *s, size_t len) {
   char *slice = (char *)malloc(sizeof(char) * (len + 1));

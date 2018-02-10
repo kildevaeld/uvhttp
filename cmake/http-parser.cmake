@@ -1,5 +1,5 @@
 
-set(HTTPPARSERDIR ${PROJECT_ROOT}/vendor/http-parser)
+set(HTTPPARSERDIR ${PROJECT_SOURCE_DIR}/vendor/http-parser)
 
 include_directories(${HTTPPARSERDIR})
 
