@@ -20,9 +20,6 @@ endif (NOT ${UVHTTP_SYSTEM_UV})
 
 include_directories(include)
 
-## HTTP_PARSER
-include(cmake/http-parser.cmake)
-
 if(UVHTTP_TLS)
 	add_subdirectory(vendor/evt-tls)
 endif(UVHTTP_TLS)

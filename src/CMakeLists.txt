@@ -5,7 +5,7 @@ set(SOURCES
     header.c
     request.c
     parser.c
-    
+    ${PROJECT_SOURCE_DIR}/vendor/http-parser/http_parser.c
 )
 
 if(UVHTTP_TLS)
@@ -15,7 +15,7 @@ if(UVHTTP_TLS)
 endif(UVHTTP_TLS)
 
 add_library(uvhttp ${SOURCES})
-target_link_libraries(uvhttp uv http_parser)
+target_link_libraries(uvhttp uv)
 
 target_include_directories(uvhttp PUBLIC ${PROJECT_SOURCE_DIR}/vendor/http-parser)
 
