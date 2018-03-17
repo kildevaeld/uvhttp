@@ -53,6 +53,7 @@ on_write_end_end:
 
 int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
                               http_request_t *req, uv_write_cb cb) {
+
   const char *path = req->path;
   if (!path)
     path = "/";
@@ -66,6 +67,7 @@ int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
   m[buf.len] = '\0';
 
   write->data = cb;
+  debug("writing headers size %s", m);
   return uv_write(write, stream, &buf, 1, on_write_end);
 }
 
@@ -75,9 +77,21 @@ int maybe_write_headers(http_client_t *client) {
     return 0;
   }
 
+  http_request_t *req = client->req;
+
+  if (req->method == HTTP_POST || req->method == HTTP_PUT ||
+      req->method == HTTP_PATCH) {
+    if (!((req->headers &&
+           uv_http_header_get(req->headers, "content-length")) ||
+          is_chunked(req->headers))) {
+      uv_http_header_set(req->headers, "Transfer-Encoding", "chunked");
+    }
+  }
+
   uv_write_t *w = malloc(sizeof(uv_write_t));
   client->headers_sent = true;
   w->data = client;
+
   debug("sending headers to: %s", client->req->host);
   return uv_http_req_write_headers(
       w, &client->handle, (http_request_t *)client->req, (uv_write_cb)free);
@@ -91,7 +105,6 @@ void on_resolved(uv_getaddrinfo_t *resolver, int status, struct addrinfo *res) {
     if (client->callbacks->on_error)
       client->callbacks->on_error(client, uv_err_name(status),
                                   "getaddrinfo callback error");
-    // fprintf(stderr, "getaddrinfo callback error %s\n", uv_err_name(status));
     free(resolver);
     return;
   }
@@ -157,6 +170,7 @@ connect_end:
 }
 
 void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
+
   size_t parsed;
   http_client_t *handle = (http_client_t *)tcp;
   http_request_t *req = handle->req;
@@ -184,8 +198,7 @@ void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
     if (handle->callbacks->on_error) {
       handle->callbacks->on_error(handle, uv_err_name(nread), "reading req");
     }
-     uv_close((uv_handle_t *)tcp, NULL);
-  
+    uv_close((uv_handle_t *)tcp, NULL);
   }
   if (buf->base)
     free(buf->base);

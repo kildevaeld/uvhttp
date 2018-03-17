@@ -33,16 +33,17 @@ static void on_error(http_client_t *client, const char *name,
 static void on_connect(http_client_t *client, int status) {
 
   uv_buf_t buf;
-  buf.base = "TestMig";
+  buf.base = "{\"email\":\"test@gmail.com\", \"password\":\"password\"}";
   buf.len = strlen(buf.base);
 
   http_request_t *req = uv_http_get_request(client);
 
   char cl[12];
   sprintf(cl, "%lu", buf.len);
-  uv_http_header_set(req->headers, "Content-Length", cl);
+  // uv_http_header_set(req->headers, "Content-Length", cl);
 
   int ret = uv_http_request_write(client, &buf, NULL);
+
   printf("write %i\n", ret);
   ret = uv_http_request_end(client);
   printf("end %i\n", ret);
@@ -71,13 +72,13 @@ int main() {
                                .on_error = on_error};
 
   http_request_t req;
-  uv_http_request_init(&req, HTTP_POST, "http://localhost:3000");
+  uv_http_request_init(&req, HTTP_POST, "http://localhost:5000/auth/login");
 
   req.headers = uv_http_header_new();
-  uv_http_header_set(req.headers, "Host", "localhost:3000");
+  uv_http_header_set(req.headers, "Host", "localhost:5000");
   // uv_http_header_set(req.headers, "transfer-encoding", "chunked");
   uv_http_header_set(req.headers, "content-type", "text/plain");
-  uv_http_header_set(req.headers, "connection", "close");
+  // uv_http_header_set(req.headers, "connection", "close");
 
   http_client_t *client = uv_http_create(loop, &req);
 
