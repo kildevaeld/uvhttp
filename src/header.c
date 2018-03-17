@@ -122,7 +122,7 @@ int uv_http_header_size(uv_http_header_t *head) {
   if (!head)
     return size;
   uv_http_header_foreach(item, head) {
-    size += strlen(item->field) + strlen(item->value + 3 /* 1 ':' and a ' ' */);
+    size += strlen(item->field) + strlen(item->value) + 3; // CRLF SPACE
   }
   size += 2;
   return size;

@@ -67,7 +67,7 @@ int uv_http_req_write_headers(uv_write_t *write, uv_stream_t *stream,
   m[buf.len] = '\0';
 
   write->data = cb;
-  debug("writing headers size %s", m);
+  debug("writing headers %s", m);
   return uv_write(write, stream, &buf, 1, on_write_end);
 }
 
