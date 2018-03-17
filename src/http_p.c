@@ -184,8 +184,8 @@ void on_req_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
     if (handle->callbacks->on_error) {
       handle->callbacks->on_error(handle, uv_err_name(nread), "reading req");
     }
-    // uv_close((uv_handle_t *)tcp, NULL);
-    // UVERR((int)nread, "reading req req");
+     uv_close((uv_handle_t *)tcp, NULL);
+  
   }
   if (buf->base)
     free(buf->base);
