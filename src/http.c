@@ -47,7 +47,7 @@ int uv_http_request(http_client_t *client, http_request_callbacks *callbacks) {
   client->callbacks = callbacks;
   http_request_t *req = client->req;
 
-  if (is_ip(req->host)) {
+  if (is_ip(req->host) || strcmp("localhost", req->host) == 0) {
     uv_tcp_init(client->loop, (uv_tcp_t *)&client->handle);
 
     struct sockaddr_in req_addr;
