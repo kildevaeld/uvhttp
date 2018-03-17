@@ -44,5 +44,18 @@ bool uv_http_request_init(http_request_t *req, uv_http_method_t method,
     return false;
   }
 
+  req->headers = uv_http_header_new();
+
+  if (!req->headers)
+    return false;
+
   return true;
+}
+
+void uv_http_request_free(http_request_t *req) {
+  if (req == NULL || req->headers == NULL)
+    return;
+
+  uv_http_header_free(req->headers);
+  req->headers = NULL;
 }

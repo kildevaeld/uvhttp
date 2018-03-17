@@ -8,6 +8,9 @@ extern "C" {
 #include <uvhttp/request.h>
 #include <uvhttp/typedefs.h>
 
+/**
+ * Create a new http client
+ **/
 http_client_t *uv_http_create(uv_loop_t *loop, http_request_t *req);
 
 void uv_http_free(http_client_t *);

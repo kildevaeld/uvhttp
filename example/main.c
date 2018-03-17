@@ -74,7 +74,7 @@ int main() {
   http_request_t req;
   uv_http_request_init(&req, HTTP_POST, "http://localhost:5000/auth/login");
 
-  req.headers = uv_http_header_new();
+  // req.headers = uv_http_header_new();
   uv_http_header_set(req.headers, "Host", "localhost:5000");
   // uv_http_header_set(req.headers, "transfer-encoding", "chunked");
   uv_http_header_set(req.headers, "content-type", "text/plain");
@@ -89,7 +89,8 @@ int main() {
   uv_run(loop, UV_RUN_DEFAULT);
 
   fclose(f);
-  free(req.headers);
+
+  uv_http_request_free(&req);
 
   // sleep(10);
 
